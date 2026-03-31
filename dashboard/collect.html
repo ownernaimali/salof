@@ -1,0 +1,255 @@
+
+
+
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>চাঁদা সংগ্রহ - স্বপ্নের আলো</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #FF6B35;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --bg-dark: #1A1A2E;
+            --white: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; }
+        body { background-color: #f0f2f5; color: #333; }
+
+        .container { max-width: 900px; margin: 40px auto 100px; }
+        
+        /* Month Switcher Styles */
+        .month-switcher {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            background: var(--white);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .nav-btn {
+            background: var(--bg-dark);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: 0.3s;
+        }
+        .nav-btn:hover { background: var(--primary); }
+        #currentMonthDisplay { font-size: 1.3rem; font-weight: 700; min-width: 160px; text-align: center; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: var(--white); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .stat-card h3 { font-size: 1.5rem; color: var(--bg-dark); }
+        .stat-paid { color: var(--success); font-weight: 700; }
+        .stat-pending { color: var(--danger); font-weight: 700; }
+
+        .collection-box { background: var(--white); border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .table-header { background: var(--bg-dark); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+
+        table { width: 100%; border-collapse: collapse; background: white; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #fafafa; font-weight: 700; color: #555; }
+
+        .status { padding: 5px 12px; border-radius: 50px; font-size: 0.85rem; font-weight: 600; }
+        .status.paid { background: rgba(39, 174, 96, 0.1); color: var(--success); }
+        .status.unpaid { background: rgba(231, 76, 60, 0.1); color: var(--danger); }
+
+        .amt-input { width: 80px; padding: 6px; border: 1px solid #ddd; border-radius: 4px; text-align: center; font-weight: 600; }
+
+        .btn-action { border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; gap: 5px; transition: 0.3s; }
+        .btn-pay { background: var(--success); color: white; }
+
+        .loading-spinner { text-align: center; padding: 20px; font-weight: bold; color: var(--primary); }
+        @media (max-width: 600px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            th:nth-child(2), td:nth-child(2) { display: none; }
+        }
+    </style>
+    <link rel="stylesheet" href="../index.css">  
+</head>
+<body>
+  <div class="sidebar">
+        <div style="font-size: 1.2rem; font-weight: 700;">স্বপ্নের আলো</div>
+        <div class="nav-links">
+            <a href="index.html"><i data-lucide="layout-dashboard" size="16"></i> ড্যাশবোর্ড</a>
+            <a href="collect.html" class="active"><i data-lucide="circle-dollar-sign" size="16"></i> চাঁদা সংগ্রহ</a>
+            <a href="register.html"><i data-lucide="user-plus" size="16"></i> নতুন সদস্য</a>
+            <a href="history.html"><i data-lucide="history" size="16"></i> ইতিহাস</a>
+<a href="view.html"><i data-lucide="user" size="16"></i>সদস্য</a>
+  
+        </div>
+    </div>
+    <div class="container">
+        <div style="text-align: center; margin-bottom: 10px;">
+            <h2 style="font-size: 2rem;">চাঁদা <span style="color: var(--primary);">সংগ্রহ ও ব্যবস্থাপনা</span></h2>
+        </div>
+
+        <div class="month-switcher">
+            <button class="nav-btn" onclick="changeMonth(-1)">
+                <i data-lucide="chevron-left" size="18"></i> আগের মাস
+            </button>
+            <div id="currentMonthDisplay">লোডিং...</div>
+            <button class="nav-btn" onclick="changeMonth(1)">
+                পরের মাস <i data-lucide="chevron-right" size="18"></i>
+            </button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card"><p>মোট সংগ্রহ</p><h3 id="totalCollected">৳ ০</h3></div>
+            <div class="stat-card"><p>দিয়েছে</p><h3 class="stat-paid" id="paidCount">০ জন</h3></div>
+            <div class="stat-card"><p>বাকি আছে</p><h3 class="stat-pending" id="unpaidCount">০ জন</h3></div>
+        </div>
+
+        <div class="collection-box">
+            <div class="table-header">
+                <h4 id="tableTitle" style="display: flex; align-items: center; gap: 8px;"><i data-lucide="users" size="20"></i> সদস্য তালিকা</h4>
+                <div style="font-size: 0.9rem;">সীমা: ৳ ১ - ১০,০০০</div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>নাম</th>
+                        <th>রক্তের গ্রুপ</th>
+                        <th>পরিমাণ (৳)</th>
+                        <th>অবস্থা</th>
+                        <th>অ্যাকশন</th>
+                    </tr>
+                </thead>
+                <tbody id="memberTable"></tbody>
+            </table>
+            <div id="loader" class="loading-spinner">ডাটা লোড হচ্ছে...</div>
+        </div>
+    </div>
+ <script src="js/index.js"></script>
+    <script>
+        // গ্লোবাল ভেরিয়েবল
+        let activeDate = new Date(); // বর্তমানে যে মাস দেখা হচ্ছে
+        const monthsBN = ["জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"];
+
+               const API = "https://sadharon-store-server.vercel.app/sregister";
+
+        // মাস পরিবর্তনের ফাংশন
+        function changeMonth(offset) {
+            activeDate.setMonth(activeDate.getMonth() + offset);
+            updateUI();
+        }
+
+        // UI আপডেট করার ফাংশন
+        function updateUI() {
+            const m = monthsBN[activeDate.getMonth()];
+            const y = activeDate.getFullYear();
+            document.getElementById("currentMonthDisplay").innerText = `${m} ${y}`;
+            document.getElementById("tableTitle").innerHTML = `<i data-lucide="users" size="20"></i> ${m} মাসের তালিকা`;
+            fetchMembers();
+            lucide.createIcons();
+        }
+
+        function fetchMembers() {
+            const targetMonth = monthsBN[activeDate.getMonth()];
+            const targetYear = activeDate.getFullYear();
+            const loader = document.getElementById("loader");
+            const tbody = document.getElementById("memberTable");
+
+            loader.style.display = "block";
+            tbody.innerHTML = "";
+
+            fetch(API)
+            .then(res => res.json())
+            .then(data => {
+                loader.style.display = "none";
+                let paidTotal = 0, paidPeople = 0, unpaidPeople = 0;
+
+                data.forEach(member => {
+                    // মেম্বারের পেমেন্ট লিস্ট থেকে নির্দিষ্ট মাস ও বছর খুঁজে বের করা
+                    const currentPayment = member.payments ? member.payments.find(p => p.month === targetMonth && p.year === targetYear) : null;
+                    const isPaid = !!currentPayment;
+                    
+                    if(isPaid) {
+                        paidPeople++;
+                        paidTotal += parseInt(currentPayment.amount);
+                    } else {
+                        unpaidPeople++;
+                    }
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><strong>${member.name || 'অজানা'}</strong></td>
+                            <td>${member.bloodGroup || 'N/A'}</td>
+                            <td>
+                                ${isPaid ? `<strong>${currentPayment.amount}</strong>` : 
+                                `<input type="number" id="amt-${member._id}" class="amt-input" value="1000" min="1" max="10000">`}
+                            </td>
+                            <td>
+                                <span class="status ${isPaid ? 'paid' : 'unpaid'}">
+                                    ${isPaid ? 'পরিশোধিত' : 'বাকি'}
+                                </span>
+                            </td>
+                            <td>
+                                ${isPaid 
+                                    ? `<i data-lucide="check-circle" style="color: var(--success);"></i>` 
+                                    : `<button class="btn-action btn-pay" onclick="payNow('${member._id}', '${member.name}')">
+                                        <i data-lucide="circle-dollar-sign" size="14"></i> জমা
+                                       </button>`
+                                }
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                document.getElementById('totalCollected').innerText = `৳ ${paidTotal.toLocaleString()}`;
+                document.getElementById('paidCount').innerText = `${paidPeople} জন`;
+                document.getElementById('unpaidCount').innerText = `${unpaidPeople} জন`;
+                lucide.createIcons();
+            })
+            .catch(err => {
+                loader.innerText = "ডাটা লোড করতে সমস্যা হয়েছে!";
+            });
+        }
+
+        function payNow(id, name) {
+            const targetMonth = monthsBN[activeDate.getMonth()];
+            const targetYear = activeDate.getFullYear();
+            const amountInput = document.getElementById(`amt-${id}`);
+            const amount = parseInt(amountInput.value);
+
+            if(isNaN(amount) || amount < 1 || amount > 10000) {
+                alert("টাকার পরিমাণ ১-১০০০০ এর মধ্যে লিখুন।");
+                return;
+            }
+
+            if(confirm(`${name}-এর ${targetMonth} ${targetYear} মাসের চাঁদা (৳${amount}) জমা নিবেন?`)) {
+                fetch(`${API}/pay/${id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        amount: amount,
+                        month: targetMonth,
+                        year: targetYear
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    alert(data.message);
+                    if(data.success) fetchMembers();
+                })
+                .catch(err => alert("সার্ভারে সমস্যা!"));
+            }
+        }
+
+        // শুরুতে রান হবে
+        updateUI();
+    </script>
+</body>
+</html>

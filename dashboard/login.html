@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <style>
+    
+    * {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.login-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+h2 { margin-bottom: 0.5rem; color: #333; }
+p { font-size: 0.9rem; color: #666; margin-bottom: 1.5rem; }
+
+.input-group {
+    margin-bottom: 1rem;
+    text-align: left;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    outline: none;
+}
+
+input:focus {
+    border-color: #007bff;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.login-btn:hover {
+    background-color: #0056b3;
+}
+
+.forgot {
+    display: block;
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    color: #007bff;
+    text-decoration: none;
+    text-align: center;
+}
+
+    </style>
+        
+        
+    </head>
+<body>
+ <div class="login-container">
+    <form class="login-form" id="loginForm">
+        <h2>Welcome Back</h2>
+        <p>Please login to your account</p>
+
+        <div class="input-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="Enter email" required>
+        </div>
+        <div class="input-group">
+            <label for="tel">Phone</label>
+            <input type="number" id="tel" placeholder="Enter phone" required>
+        </div>
+
+        <div class="input-group">
+            <label for="pass">Password</label>
+            <input type="password" id="pass" placeholder="Enter password" required>
+        </div>
+
+        <button type="submit" class="login-btn">Login</button>
+        <a href="#" class="forgot">Forgot password?</a>
+    </form>
+</div>
+
+<script>
+    const loginForm = document.getElementById('loginForm');
+
+    loginForm.addEventListener('submit', function(e) {
+        // 1. Prevent the form from submitting/refreshing the page
+        e.preventDefault();
+
+        // 2. Collect the data from the inputs
+        const userEmail = document.getElementById('email').value;
+        const userPhone = document.getElementById('tel').value;
+        const userPass = document.getElementById('pass').value;
+
+        // 3. Define the admin credentials to check against
+        const adminEmail = "admin@gmail.com";
+        const adminPhone = "01916182034";
+        const adminPass = "123456";
+
+        // 4. Verification Logic
+        if (userEmail === adminEmail && userPhone === adminPhone && userPass === adminPass) {
+            alert("Login Successful! Welcome, Admin.");
+            // 1. Save the login state to Local Storage
+            localStorage.setItem('token', 'true');
+        
+            // You can redirect the user here:
+            window.location.href = "/";
+        } else {
+            alert("Invalid credentials. Please try again.");
+        }
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>পেমেন্ট হিস্ট্রি - স্বপ্নের আলো</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #FF6B35;
+            --success: #27ae60;
+            --bg-dark: #1A1A2E;
+            --white: #ffffff;
+            --gray: #64748b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; }
+        body { background-color: #f8fafc; color: #1e293b; }
+
+        .container { max-width: 1000px; margin: 40px auto 100px; }
+        
+        /* Header Section */
+        .header-box { text-align: center; margin-bottom: 30px; background: var(--bg-dark); color: white; padding: 30px; border-radius: 20px; }
+        .header-box h1 { font-size: 2.2rem; margin-bottom: 10px; }
+        
+        /* Total Stats */
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .card { background: var(--white); padding: 25px; border-radius: 15px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 20px; }
+        .card i { background: rgba(255, 107, 53, 0.1); color: var(--primary); padding: 15px; border-radius: 12px; }
+        .card-info h3 { font-size: 1.8rem; color: var(--bg-dark); }
+        .card-info p { color: var(--gray); font-size: 0.95rem; }
+
+        /* History Table */
+        .table-container { background: var(--white); border-radius: 20px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); overflow: hidden; }
+        .table-title { padding: 20px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; background: #fafafa; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f8fafc; padding: 15px; text-align: left; color: var(--gray); font-weight: 600; text-transform: uppercase; font-size: 0.85rem; }
+        td { padding: 18px 15px; border-bottom: 1px solid #f1f5f9; }
+        
+        .member-info { display: flex; flex-direction: column; }
+        .member-info span { font-size: 0.8rem; color: var(--gray); }
+        
+        .badge { padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
+        .badge-count { background: #e2e8f0; color: #475569; }
+        .badge-total { background: rgba(39, 174, 96, 0.1); color: var(--success); }
+
+        .payment-list { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+        .month-tag { font-size: 0.75rem; background: #f1f5f9; padding: 2px 8px; border-radius: 4px; color: #64748b; border: 1px solid #e2e8f0; }
+
+        .loading { text-align: center; padding: 50px; color: var(--primary); font-weight: bold; }
+        
+        @media (max-width: 600px) {
+            th:nth-child(2), td:nth-child(2) { display: none; }
+        }
+    </style>
+   <link rel="stylesheet" href="../index.css">  
+</head>
+<body>
+  <div class="sidebar">
+        <div style="font-size: 1.2rem; font-weight: 700;">স্বপ্নের আলো</div>
+        <div class="nav-links">
+            <a href="index.html"><i data-lucide="layout-dashboard" size="16"></i> ড্যাশবোর্ড</a>
+            <a href="collect.html"><i data-lucide="circle-dollar-sign" size="16"></i> চাঁদা সংগ্রহ</a>
+            <a href="register.html"><i data-lucide="user-plus" size="16"></i> নতুন সদস্য</a>
+            <a href="history.html" class="active"><i data-lucide="history" size="16"></i> ইতিহাস</a>
+<a href="view.html"><i data-lucide="user" size="16"></i>সদস্য</a>
+  
+        </div>
+    </div>
+
+<div class="container">
+
+    <div class="summary-grid">
+        <div class="card">
+            <i data-lucide="wallet" size="32"></i>
+            <div class="card-info">
+                <p>সর্বমোট সংগ্রহ</p>
+                <h3 id="grandTotalText">৳ ০</h3>
+            </div>
+        </div>
+        <div class="card">
+            <i data-lucide="users" size="32"></i>
+            <div class="card-info">
+                <p>মোট সদস্য</p>
+                <h3 id="totalMembersText">০ জন</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <div class="table-title">
+            <h3><i data-lucide="layers" style="vertical-align: middle;"></i> সদস্য ভিত্তিক রিপোর্ট</h3>
+            <button onclick="fetchHistory()" style="background:none; border:none; cursor:pointer; color:var(--primary);"><i data-lucide="refresh-cw" size="20"></i></button>
+        </div>
+        <div id="loader" class="loading">ডাটা লোড হচ্ছে...</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>সদস্যের নাম ও ফোন</th>
+                    <th>রক্তের গ্রুপ</th>
+                    <th>পরিশোধিত মাস</th>
+                    <th>মোট জমা</th>
+                </tr>
+            </thead>
+            <tbody id="historyBody"></tbody>
+        </table>
+    </div>
+</div>
+    <script src="js/index.js"></script>
+<script>
+    if(window.lucide) {lucide.createIcons()}
+    const API= "https://sadharon-store-server.vercel.app/sregister";
+    
+    async function fetchHistory() {
+        try {
+            document.getElementById('loader').style.display = 'block';
+            const res = await fetch(API);
+            const data = await res.json();
+            
+            let grandTotal = 0;
+            const tableBody = document.getElementById('historyBody');
+            tableBody.innerHTML = '';
+
+            data.forEach(member => {
+                // মেম্বারের মোট জমানো টাকা হিসাব
+                const memberTotal = member.payments ? member.payments.reduce((sum, p) => sum + parseInt(p.amount), 0) : 0;
+                grandTotal += memberTotal;
+
+                // পেমেন্ট করা মাসগুলোর নাম বের করা
+                const paidMonths = member.payments ? member.payments.map(p => `<span class="month-tag">${p.month} '${p.year.toString().slice(-2)}</span>`).join('') : '<span style="color:#cbd5e1">কোন রেকর্ড নেই</span>';
+
+                tableBody.innerHTML += `
+                    <tr>
+                        <td>
+                            <div class="member-info">
+                                <strong>${member.fullName || member.name}</strong>
+                                <span><i data-lucide="phone" size="10"></i> ${member.phone}</span>
+                            </div>
+                        </td>
+                        <td><span class="badge badge-count">${member.bloodGroup || 'N/A'}</span></td>
+                        <td>
+                            <div class="badge-count" style="display:inline-block; padding:2px 8px; border-radius:5px; margin-bottom:5px; font-size:12px;">
+                                ${member.payments ? member.payments.length : 0} মাস
+                            </div>
+                            <div class="payment-list">${paidMonths}</div>
+                        </td>
+                        <td>
+                            <strong style="color:var(--success)">৳ ${memberTotal.toLocaleString()}</strong>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('grandTotalText').innerText = `৳ ${grandTotal.toLocaleString()}`;
+            document.getElementById('totalMembersText').innerText = `${data.length} জন`;
+            
+            document.getElementById('loader').style.display = 'none';
+            lucide.createIcons();
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            document.getElementById('loader').innerText = "ডাটা লোড করা যায়নি!";
+        }
+    }
+
+    // পেজ লোড হলে ডাটা আনা
+    fetchHistory();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>চাঁদা সংগ্রহ - স্বপ্নের আলো</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #FF6B35;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --bg-dark: #1A1A2E;
+            --white: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; }
+        body { background-color: #f4f7f6; display: flex; }
+        
+        /* Sidebar Styles */
+        .sidebar { width: 240px; background: var(--bg-dark); color: white; min-height: 100vh; padding: 20px; position: fixed; }
+        .nav-links { margin-top: 30px; display: flex; flex-direction: column; gap: 10px; }
+        .nav-links a { color: #ccc; text-decoration: none; padding: 10px; border-radius: 8px; display: flex; align-items: center; gap: 10px; transition: 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background: var(--primary); color: white; }
+
+        .main-content { margin-left: 240px; width: calc(100% - 240px); padding: 30px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        /* Month Navigation */
+        .month-nav {
+            display: flex; align-items: center; justify-content: space-between;
+            background: var(--white); padding: 15px 25px; border-radius: 12px;
+            margin-bottom: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .month-display { font-size: 1.4rem; font-weight: 700; color: var(--bg-dark); display: flex; align-items: center; gap: 10px; }
+        .nav-btn { background: var(--bg-dark); color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: 0.3s; }
+        .nav-btn:hover { background: var(--primary); }
+
+        /* Stats Card */
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: var(--white); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-bottom: 4px solid #ddd; }
+        .stat-total { border-color: var(--primary); }
+        .stat-paid { border-color: var(--success); }
+        .stat-pending { border-color: var(--danger); }
+
+        /* Table Styles */
+        .collection-box { background: var(--white); border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #fafafa; color: #555; }
+
+        .amount-input { width: 90px; padding: 6px; border: 2px solid #ddd; border-radius: 6px; text-align: center; font-weight: 600; }
+        .pay-btn { background: var(--success); color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        .status-badge { padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; font-weight: 700; }
+        .status-paid { background: #d1f2eb; color: #16a085; }
+        .status-unpaid { background: #fadbd8; color: #c0392b; }
+
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; width: 100%; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div style="font-size: 1.2rem; font-weight: 700;">স্বপ্নের আলো</div>
+        <div class="nav-links">
+            <a href="index.html"><i data-lucide="layout-dashboard" size="16"></i> ড্যাশবোর্ড</a>
+            <a href="collect.html" class="active"><i data-lucide="circle-dollar-sign" size="16"></i> চাঁদা সংগ্রহ</a>
+            <a href="register.html"><i data-lucide="user-plus" size="16"></i> নতুন সদস্য</a>
+            <a href="history.html"><i data-lucide="history" size="16"></i> ইতিহাস</a>
+            <a href="view.html"><i data-lucide="user" size="16"></i> সদস্য</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <div class="month-nav">
+                <button class="nav-btn" onclick="changeMonth(-1)"><i data-lucide="chevron-left"></i> আগের মাস</button>
+                <div class="month-display"><i data-lucide="calendar" style="color: var(--primary);"></i> <span id="labelMonth">লোডিং...</span></div>
+                <button class="nav-btn" onclick="changeMonth(1)">পরের মাস <i data-lucide="chevron-right"></i></button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card stat-total"><p>মোট সংগৃহীত</p><h3 id="statTotal">৳ ০</h3></div>
+                <div class="stat-card stat-paid"><p>টাকা দিয়েছে</p><h3 id="statPaidCount">০ জন</h3></div>
+                <div class="stat-card stat-pending"><p>বাকি আছে</p><h3 id="statUnpaidCount">০ জন</h3></div>
+            </div>
+
+            <div class="collection-box">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>সদস্যের নাম</th>
+                            <th>মোবাইল</th>
+                            <th>টাকার পরিমাণ (৳)</th>
+                            <th>অবস্থা</th>
+                            <th>অ্যাকশন</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr><td colspan="5" style="text-align:center;">মেম্বার তথ্য লোড হচ্ছে...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "https://sadharon-store-server.vercel.app/sregister";
+        
+        const monthsBN = ["জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"];
+        const monthsEN = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        
+        let currentMonthIdx = new Date().getMonth(); 
+        let currentYear = 2026;
+        let allMembers = [];
+
+        // ১. ডাটাবেস থেকে মেম্বার লিস্ট নিয়ে আসা
+        async function fetchMembers() {
+            try {
+                const res = await fetch(API_URL);
+                allMembers = await res.json();
+                renderTable();
+            } catch (err) {
+                console.error("Error fetching members:", err);
+                document.getElementById('tableBody').innerHTML = "<tr><td colspan='5' style='color:red; text-align:center;'>সার্ভার ত্রুটি!</td></tr>";
+            }
+        }
+
+        // ২. টেবিল রেন্ডার করা
+        function renderTable() {
+            const monthNameBN = monthsBN[currentMonthIdx];
+            const monthNameEN = monthsEN[currentMonthIdx];
+            document.getElementById('labelMonth').innerText = `${monthNameBN} ${currentYear}`;
+
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = "";
+
+            let totalCollected = 0;
+            let paidCount = 0;
+
+            allMembers.forEach(member => {
+                // চেক: এই মাসের পেমেন্ট আছে কি না
+                const payment = member.payments?.find(p => p.month === monthNameEN && p.year === currentYear);
+                const isPaid = !!payment;
+
+                if(isPaid) {
+                    paidCount++;
+                    totalCollected += payment.amount;
+                }
+
+                const row = `
+                    <tr>
+                        <td><strong>${member.name}</strong></td>
+                        <td>${member.phone}</td>
+                        <td>
+                            ${isPaid ? `৳ ${payment.amount}` : 
+                            `<input type="number" id="input-${member._id}" class="amount-input" value="1000">`}
+                        </td>
+                        <td><span class="status-badge ${isPaid ? 'status-paid' : 'status-unpaid'}">${isPaid ? 'পরিশোধিত' : 'বাকি'}</span></td>
+                        <td>
+                            ${isPaid ? 
+                            '<i data-lucide="check-circle" style="color: #27ae60;"></i>' : 
+                            `<button class="pay-btn" onclick="payNow('${member._id}')">জমা দিন</button>`}
+                        </td>
+                    </tr>
+                `;
+                tableBody.insertAdjacentHTML('beforeend', row);
+            });
+
+            // স্ট্যাট আপডেট
+            document.getElementById('statTotal').innerText = `৳ ${totalCollected}`;
+            document.getElementById('statPaidCount').innerText = `${paidCount} জন`;
+            document.getElementById('statUnpaidCount').innerText = `${allMembers.length - paidCount} জন`;
+
+            lucide.createIcons();
+        }
+
+        // ৩. পেমেন্ট জমা দেওয়া (PATCH Request)
+        async function payNow(id) {
+            const amount = document.getElementById(`input-${id}`).value;
+            const month = monthsEN[currentMonthIdx];
+
+            if(!amount || amount < 1) return alert("সঠিক পরিমাণ লিখুন!");
+
+            try {
+                const res = await fetch(`${API_URL}/pay/${id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        amount: amount,
+                        month: month,
+                        year: currentYear
+                    })
+                });
+
+                const data = await res.json();
+                if(data.success) {
+                    alert(data.message);
+                    fetchMembers(); // ডাটা রিফ্রেশ
+                } else {
+                    alert(data.message);
+                }
+            } catch (err) {
+                alert("পেমেন্ট ব্যর্থ হয়েছে!");
+            }
+        }
+
+        function changeMonth(step) {
+            currentMonthIdx += step;
+            if(currentMonthIdx < 0) { currentMonthIdx = 11; currentYear--; }
+            else if(currentMonthIdx > 11) { currentMonthIdx = 0; currentYear++; }
+            renderTable();
+        }
+
+        window.onload = fetchMembers;
+    </script>
+</body>
+</html>

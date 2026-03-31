@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>স্বপ্নের আলো - মেম্বার সার্চ</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --primary: #FF6B35;
+            --bg-dark: #1A1A2E;
+            --white: #ffffff;
+            --text-muted: #666;
+            --border: #eeeeee;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; }
+
+        body {
+            background-color: #f0f2f5;
+        
+        }
+
+        /* --- Search Box Style --- */
+        .search-container {
+            width: 100%;
+            max-width: 700px;
+            background: var(--white);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            margin-bottom: 10px;
+        }
+
+        .search-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-wrapper i {
+            position: absolute;
+            left: 15px;
+            color: var(--text-muted);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 12px 12px 45px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            outline: none;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+        }
+
+        /* --- Member Card Style --- */
+        .member-card {
+            width: 100%;
+            max-width: 700px;
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            transition: 0.3s ease;
+            border: 1px solid var(--border);
+        }
+
+        @media (min-width: 400px) {
+            .member-card { flex-direction: row; max-height: 300px; align-items: center; }
+        }
+
+        .card-img-wrapper {
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 15px;
+            background: #fafafa;
+        }
+
+        @media (min-width: 400px) {
+            .card-img-wrapper { width: 230px; min-width: 230px; height: 230px; padding: 0; }
+        }
+
+        .card-img-wrapper img { width: 230px; height: 230px; object-fit: cover; border-radius: 8px; }
+
+        .blood-tag {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: #e74c3c;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .card-content { padding: 20px; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+
+        .m-name { font-size: 1.4rem; color: var(--bg-dark); margin-bottom: 4px; }
+        .m-pos { color: var(--primary); font-weight: 600; margin-bottom: 15px; font-size: 0.95rem; }
+
+        .info-item { display: flex; align-items: center; gap: 10px; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 6px; }
+        .info-item i { color: var(--primary); }
+
+        .view-btn {
+            width: fit-content;
+            padding: 8px 20px;
+            background: var(--bg-dark);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .view-btn:hover { background: var(--primary); }
+        
+        /* No Result Message */
+        #no-result { display: none; color: var(--text-muted); margin-top: 20px; }
+    </style>
+   <link rel="stylesheet" href="../index.css">  
+</head>
+<body>
+  <div class="sidebar">
+        <div style="font-size: 1.2rem; font-weight: 700;">স্বপ্নের আলো</div>
+        <div class="nav-links">
+            <a href="index.html"><i data-lucide="layout-dashboard" size="16"></i> ড্যাশবোর্ড</a>
+            <a href="collect.html"><i data-lucide="circle-dollar-sign" size="16"></i> চাঁদা সংগ্রহ</a>
+            <a href="register.html" ><i data-lucide="user-plus" size="16"></i> নতুন সদস্য</a>
+            <a href="history.html"><i data-lucide="history" size="16"></i> ইতিহাস</a>
+<a href="view.html" class="active"><i data-lucide="user" size="16"></i>সদস্য</a>
+  
+        </div>
+    </div>
+
+
+    <div class="search-container">
+        <div class="search-wrapper">
+            <i data-lucide="search" size="20"></i>
+            <input type="text" id="searchInput" class="search-input" placeholder="নাম, মোবাইল বা রক্তের গ্রুপ (যেমন: A+) দিয়ে খুঁজুন...">
+        </div>
+    </div>
+
+    <div id="memberList" style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 20px;">
+    </div>
+
+    <div id="loading" style="text-align: center; margin-top: 20px;">লোডিং হচ্ছে...</div>
+    
+   <script src="js/index.js"></script>
+    <script>
+    
+    const API = "https://sadharon-store-server.vercel.app/sregister";
+        lucide.createIcons();
+
+async function fetchMembers() {
+    try {
+        const response = await fetch(API);
+        const data = await response.json();
+        
+        const memberList = document.getElementById('memberList');
+        const loading = document.getElementById('loading');
+        
+        // Hide loading text
+        if(loading) loading.style.display = 'none';
+        
+        // Clear current list
+        memberList.innerHTML = "";
+
+        data.forEach(member => {
+            const card = document.createElement('div');
+            card.className = 'member-card';
+            
+            // Building the card HTML with your API data
+            card.innerHTML = `
+                <div class="card-img-wrapper">
+                    <img src="${member.photoLink || 'default-avatar.png'}" alt="Photo">
+                    <div class="blood-tag">${member.bloodGroup}</div>
+                </div>
+                <div class="card-content">
+                    <h3 class="m-name">${member.name}</h3>
+                    <p class="m-pos">${member.position}</p>
+                    <div class="m-contact-info">
+                        <div class="info-item">
+                            <i data-lucide="phone" size="16"></i>
+                            <span class="m-phone">${member.phone}</span>
+                        </div>
+                        <div class="info-item">
+                            <i data-lucide="map-pin" size="16"></i>
+                            <span>${member.presentAddress}</span>
+                        </div>
+                    </div>
+                  <button class="view-btn" onclick="window.location.href='memberinfo.html?id=${member._id}'">
+    View Info <i data-lucide="external-link"></i>
+</button>
+
+                </div>
+            `;
+            memberList.appendChild(card);
+        });
+
+        // Re-initialize Lucide icons for the new elements
+        lucide.createIcons();
+
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        document.getElementById('memberList').innerHTML = "<p>ডেটা লোড করতে সমস্যা হয়েছে।</p>";
+    }
+}
+
+// Call the function when the page loads
+window.onload = fetchMembers;
+
+    </script>
+</body>
+</html>

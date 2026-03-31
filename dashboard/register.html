@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>সদস্য নিবন্ধন - স্বপ্নের আলো ফাউন্ডেশন</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #FF6B35;
+            --bg-dark: #1A1A2E;
+            --white: #ffffff;
+            --light-gray: #f4f7f6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; }
+
+        body {
+            background-color: var(--light-gray);
+            
+        }
+
+        .reg-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--white);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-top: 5px solid var(--primary);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .header h2 { color: var(--bg-dark); font-size: 2rem; }
+        .header p { color: #666; margin-top: 5px; }
+
+        form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .full-width { grid-column: span 2; }
+
+        label {
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+            font-size: 0.95rem;
+        }
+
+        input, select, textarea {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            outline: none;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 5px rgba(255, 107, 53, 0.2);
+        }
+
+        .submit-btn {
+            grid-column: span 2;
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .submit-btn:hover {
+            background: #e85a2a;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 600px) {
+            form { grid-template-columns: 1fr; }
+            .full-width { grid-column: span 1; }
+            .submit-btn { grid-column: span 1; }
+            .reg-container { padding: 25px; }
+        }
+    </style>
+   <link rel="stylesheet" href="../index.css">  
+</head>
+<body>
+  <div class="sidebar">
+        <div style="font-size: 1.2rem; font-weight: 700;">স্বপ্নের আলো</div>
+        <div class="nav-links">
+            <a href="index.html"><i data-lucide="layout-dashboard" size="16"></i> ড্যাশবোর্ড</a>
+            <a href="collect.html"><i data-lucide="circle-dollar-sign" size="16"></i> চাঁদা সংগ্রহ</a>
+            <a href="register.html" class="active"><i data-lucide="user-plus" size="16"></i> নতুন সদস্য</a>
+            <a href="history.html"><i data-lucide="history" size="16"></i> ইতিহাস</a>
+<a href="view.html"><i data-lucide="user" size="16"></i>সদস্য</a>
+  
+        </div>
+    </div>
+
+    <div class="reg-container">
+        <div class="header">
+            <i data-lucide="user-plus" style="color: var(--primary); width: 50px; height: 50px; margin-bottom: 10px;"></i>
+            <h2>সদস্য নিবন্ধন ফর্ম</h2>
+            <p>অনুগ্রহ করে সঠিক তথ্য দিয়ে নিচের ফর্মটি পূরণ করুন</p>
+        </div>
+
+        <form id="memberForm">
+            <div class="form-group full-width">
+                <label for="fullName">পূর্ণ নাম (Full Name) *</label>
+                <input type="text" id="fullName" placeholder="আপনার নাম লিখুন" required>
+            </div>
+
+            <div class="form-group">
+                <label for="fatherName">পিতার নাম (Father's Name) *</label>
+                <input type="text" id="fatherName" placeholder="পিতার নাম লিখুন" required>
+            </div>
+
+            <div class="form-group">
+                <label for="motherName">মাতার নাম (Mother's Name) *</label>
+                <input type="text" id="motherName" placeholder="মাতার নাম লিখুন" required>
+            </div>
+
+            <div class="form-group">
+                <label for="dob">জন্ম তারিখ (Date of Birth) *</label>
+                <input type="date" id="dob" required>
+            </div>
+
+            <div class="form-group">
+                <label for="bloodGroup">রক্তের গ্রুপ (Blood Group) *</label>
+                <select id="bloodGroup" required>
+                    <option value="">নির্বাচন করুন</option>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">যোগাযোগ নম্বর (Contact Number) *</label>
+                <input type="tel" id="phone" placeholder="01XXX-XXXXXX" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">ইমেইল (Email Address)</label>
+                <input type="email" id="email" placeholder="example@gmail.com">
+            </div>
+
+            <div class="form-group full-width">
+                <label for="presentAddress">বর্তমান ঠিকানা (Present Address) *</label>
+                <textarea id="presentAddress" rows="2" placeholder="গ্রাম, ডাকঘর, উপজেলা, জেলা" required></textarea>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="permanentAddress">স্থায়ী ঠিকানা (Permanent Address) *</label>
+                <textarea id="permanentAddress" rows="2" placeholder="গ্রাম, ডাকঘর, উপজেলা, জেলা" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="nid">এনআইডি নং (NID Number)</label>
+                <input type="number" id="nid" placeholder="জাতীয় পরিচয়পত্র নম্বর">
+            </div>
+
+            <div class="form-group">
+                <label for="birthReg">জন্ম নিবন্ধন নং (Birth Reg. Number)</label>
+                <input type="number" id="birthReg" placeholder="জন্ম নিবন্ধন নম্বর">
+            </div>
+
+            <div class="form-group">
+                <label for="education">সর্বশেষ শিক্ষাগত যোগ্যতা (Education) *</label>
+                <input type="text" id="education" placeholder="উদা: এস.এস.সি / অনার্স" required>
+            </div>
+
+            <div class="form-group">
+                <label for="emergencyContact">জরুরী যোগাযোগ নম্বর (Emergency Contact) *</label>
+                <input type="tel" id="emergencyContact" placeholder="পিতা/মাতা/ভাই এর নম্বর" required>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="photoLink">ছবির লিঙ্ক (Photo Link)</label>
+                <input type="url" id="photoLink" placeholder="আপনার ছবির অনলাইন লিঙ্ক এখানে দিন">
+            </div>
+
+            <button type="submit" class="submit-btn">
+                নিবন্ধন সম্পন্ন করুন <i data-lucide="check-circle"></i>
+            </button>
+        </form>
+    </div>
+    <script src="js/index.js"></script>
+    <script>
+    
+    const API = "https://sadharon-store-server.vercel.app/sregister";
+  
+    // আইকন লোড করা
+    try {
+        lucide.createIcons();
+    } catch (e) {
+        console.log(e)
+    }
+        // ফর্ম সাবমিট ইভেন্ট
+        const memberForm = document.getElementById('memberForm');
+        memberForm.addEventListener('submit', function(e) {
+            e.preventDefault(); 
+
+            // আইডি ব্যবহার করে ডেটা সংগ্রহ
+            const formData = {
+                name: document.getElementById('fullName').value, // ব্যাকএন্ডের সাথে মিল রাখতে 'name' ব্যবহার করা ভালো
+                fatherName: document.getElementById('fatherName').value,
+                motherName: document.getElementById('motherName').value,
+                dob: document.getElementById('dob').value,
+                bloodGroup: document.getElementById('bloodGroup').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value,
+                presentAddress: document.getElementById('presentAddress').value,
+                permanentAddress: document.getElementById('permanentAddress').value,
+                nid: document.getElementById('nid').value,
+                birthReg: document.getElementById('birthReg').value,
+                education: document.getElementById('education').value,
+                emergencyContact: document.getElementById('emergencyContact').value,
+                photoLink: document.getElementById('photoLink').value,
+            };
+
+            // সাবমিট বাটন লোডিং স্টেট
+            const submitBtn = e.target.querySelector('.submit-btn');
+            submitBtn.innerHTML = 'প্রসেসিং...';
+            submitBtn.disabled = true;
+
+            fetch(API, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json" // এই লাইনটি অত্যন্ত জরুরি
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    alert(data.message);
+                     memberForm.reset();
+                } else {
+                    alert("ত্রুটি: " + data.message);
+                }
+            })
+            .catch(err => {
+                alert("সার্ভারে সংযোগ করা যাচ্ছে না!");
+                console.error(err);
+            })
+            .finally(() => {
+                submitBtn.innerHTML = 'নিবন্ধন সম্পন্ন করুন <i data-lucide="check-circle"></i>';
+                submitBtn.disabled = false;
+                lucide.createIcons(); // আইকন পুনরায় লোড
+            });
+        });
+
+    </script>
+</body>
+</html>

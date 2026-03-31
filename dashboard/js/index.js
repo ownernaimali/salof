@@ -1,0 +1,6 @@
+
+const token = localStorage.getItem('token')
+if(!token) {
+    localStorage.removeItem('token')
+    window.location.href = "/dashboard/login.html"
+}

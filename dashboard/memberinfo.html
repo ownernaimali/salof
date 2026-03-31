@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>সদস্যের বিস্তারিত প্রোফাইল</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root { --primary: #2563eb; --text-main: #1e293b; --bg: #f8fafc; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; padding: 20px; color: var(--text-main); }
+        
+        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        
+        /* Header Profile Section */
+        .profile-header { background: linear-gradient(135deg, #2563eb, #1e40af); padding: 40px 20px; text-align: center; color: white; }
+        .profile-img { width: 140px; height: 140px; border-radius: 50%; border: 5px solid rgba(255,255,255,0.2); object-fit: cover; margin-bottom: 15px; }
+        .profile-header h1 { margin: 10px 0 5px; font-size: 1.8rem; }
+        .badge { background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; text-transform: uppercase; }
+
+        /* Info Grid */
+        .info-section { padding: 30px; }
+        .section-title { font-size: 1.2rem; font-weight: 700; color: var(--primary); border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-bottom: 40px; }
+        .item { display: flex; flex-direction: column; }
+        .label { font-size: 0.85rem; color: #64748b; font-weight: 600; margin-bottom: 4px; }
+        .value { font-size: 1rem; color: #0f172a; font-weight: 500; word-break: break-word; }
+
+        .blood-value { color: #dc2626; font-weight: 800; }
+        .loading-overlay { text-align: center; padding: 100px 0; font-weight: bold; }
+        
+        @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="loader" class="loading-overlay">অপেক্ষা করুন... তথ্য সংগ্রহ করা হচ্ছে</div>
+    
+    <div id="content" style="display: none;">
+        <div class="profile-header">
+            <img id="view-photo" src="" alt="Member" class="profile-img">
+            <h1 id="view-name"></h1>
+            <span class="badge" id="view-position"></span>
+        </div>
+
+        <div class="info-section">
+            <div class="section-title"><i data-lucide="user"></i> ব্যক্তিগত তথ্য</div>
+            <div class="grid">
+                <div class="item"><span class="label">পিতার নাম</span><span class="value" id="view-father"></span></div>
+                <div class="item"><span class="label">মাতার নাম</span><span class="value" id="view-mother"></span></div>
+                <div class="item"><span class="label">জন্ম তারিখ</span><span class="value" id="view-dob"></span></div>
+                <div class="item"><span class="label">রক্তের গ্রুপ</span><span class="value blood-value" id="view-blood"></span></div>
+            </div>
+
+            <div class="section-title"><i data-lucide="map-pin"></i> যোগাযোগ ও ঠিকানা</div>
+            <div class="grid">
+                <div class="item"><span class="label">মোবাইল নম্বর</span><span class="value" id="view-phone"></span></div>
+                <div class="item"><span class="label">ইমেইল</span><span class="value" id="view-email"></span></div>
+                <div class="item"><span class="label">বর্তমান ঠিকানা</span><span class="value" id="view-present"></span></div>
+                <div class="item"><span class="label">স্থায়ী ঠিকানা</span><span class="value" id="view-permanent"></span></div>
+            </div>
+
+            <div class="section-title"><i data-lucide="shield-check"></i> পরিচয় ও শিক্ষা</div>
+            <div class="grid">
+                <div class="item"><span class="label">এনআইডি (NID)</span><span class="value" id="view-nid"></span></div>
+                <div class="item"><span class="label">জন্ম নিবন্ধন</span><span class="value" id="view-birth"></span></div>
+                <div class="item"><span class="label">শিক্ষাগত যোগ্যতা</span><span class="value" id="view-edu"></span></div>
+                <div class="item"><span class="label">জরুরী যোগাযোগ</span><span class="value" id="view-emergency"></span></div>
+            </div>
+
+            <div class="section-title"><i data-lucide="calendar"></i> সিস্টেম তথ্য</div>
+            <div class="grid">
+                <div class="item"><span class="label">নিবন্ধন তারিখ</span><span class="value" id="view-regdate"></span></div>
+                <div class="item"><span class="label">মেম্বার আইডি</span><span class="value" id="view-id"></span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <script src="js/index.js"></script>
+    <script>
+    const API = "https://sadharon-store-server.vercel.app/sregister";
+    const urlParams = new URLSearchParams(window.location.search);
+    const memberId = urlParams.get('id');
+
+    async function loadFullData() {
+        if (!memberId) {
+            document.getElementById('loader').innerText = "কোনো মেম্বার আইডি পাওয়া যায়নি!";
+            return;
+        }
+
+        try {
+            const res = await fetch(API);
+            const members = await res.json();
+            const m = members.find(item => item._id === memberId);
+
+            if (m) {
+                // Mapping all fields from your JSON
+                document.getElementById('view-photo').src = m.photoLink || 'default.png';
+                document.getElementById('view-name').innerText = m.name;
+                document.getElementById('view-position').innerText = m.position;
+                document.getElementById('view-father').innerText = m.fatherName;
+                document.getElementById('view-mother').innerText = m.motherName;
+                document.getElementById('view-dob').innerText = m.dob;
+                document.getElementById('view-blood').innerText = m.bloodGroup;
+                document.getElementById('view-phone').innerText = m.phone;
+                document.getElementById('view-email').innerText = m.email;
+                document.getElementById('view-present').innerText = m.presentAddress;
+                document.getElementById('view-permanent').innerText = m.permanentAddress;
+                document.getElementById('view-nid').innerText = m.nid;
+                document.getElementById('view-birth').innerText = m.birthReg;
+                document.getElementById('view-edu').innerText = m.education;
+                document.getElementById('view-emergency').innerText = m.emergencyContact;
+                document.getElementById('view-id').innerText = m._id;
+                
+                // Formatting Date
+                const date = new Date(m.regDate);
+                document.getElementById('view-regdate').innerText = date.toLocaleDateString('bn-BD');
+
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('content').style.display = 'block';
+                lucide.createIcons();
+            } else {
+                document.getElementById('loader').innerText = "সদস্যের তথ্য খুঁজে পাওয়া যায়নি।";
+            }
+        } catch (err) {
+            document.getElementById('loader').innerText = "সার্ভার এর সাথে সংযোগ বিচ্ছিন্ন!";
+        }
+    }
+
+    window.onload = loadFullData;
+</script>
+</body>
+</html>
